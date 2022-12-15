@@ -35,7 +35,13 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     }
 
     elseif($_POST['action']==='update'){
+
+      if($_POST['is_complete']==0){
         $statement=$database->prepare("UPDATE todolists SET `is_complete`=1 where id=:tid");
+      }elseif($_POST['is_complete']==1){
+        $statement=$database->prepare("UPDATE todolists SET `is_complete`=0 where id=:tid");
+      }
+
         $statement->execute([
           'tid'=>$_POST['taskid']
         ]);
@@ -66,11 +72,11 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
       body {
         background: #f1f1f1;
       }
-
+/* 
       .strike{
         color:lightgrey;
         text-decoration: line-through;
-      }
+      } */
     </style>
   </head>
   <body>
@@ -94,21 +100,24 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         //   }
           
           ?>
-            <div class="d-flex 
-            <?php if($tasks['is_complete']) echo 'strike';?>
-            ">
-              <!-- <button class="btn btn-sm btn-success">
-                <i class="bi bi-check-square"></i>
-              </button> -->
-              <?php if(!$tasks['is_complete']): ?>
+            <div>
+              <div class="d-inline-block">
               <form method="POST" action="<?php echo $_SERVER['REQUEST_URI']?>">
-                    <input type="hidden" name="action" value="update">
-                    <input type="hidden" name="taskid" value="<?php echo $tasks['id'] ;?>">
-                  <input type="checkbox" name="" id="checked" class="check">
+              <input type="hidden" name="action" value="update">
+               <input type="hidden" name="taskid" value="<?php echo $tasks['id'] ;?>">
+                <input type="hidden" name="is_complete" value="<?php echo $tasks['is_complete'] ;?>">
+             <?php if($tasks['is_complete']==1) :?>
+              <button class="btn btn-sm btn-success">
+                <i class="bi bi-check-square"></i>
+              </button>
+              <?php else: ?>
+                <button class="btn btn-sm btn-light">
+                  <i class="bi bi-square"></i>
+                  <?php endif;?>    
               </form>
-              <?php endif;?>
-              <span class="ms-2">
-                <?php echo $tasks['task']; ?>
+            </div>
+            <span class="ms-2">
+             <?php echo $tasks['task']; ?>
               </span>
             </div>
             <div>
@@ -182,7 +191,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
        }
     </script> -->
 
-    <script>
+    <!-- <script>
         let checks = document.getElementsByClassName("check");
 
         for(let check of checks){
@@ -190,7 +199,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
               e.target.parentElement.submit()
             }
         }
-    </script>
+    </script> -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
